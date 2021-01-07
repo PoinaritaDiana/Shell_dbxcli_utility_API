@@ -1,0 +1,19 @@
+{
+  "name": "so-api",
+  "version": "1.0.0",
+  "description": "API for SO project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raresGabriel01/SO-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raresGabriel01/SO-api/issues"
+  },
+  "homepage": "https://github.com/raresGabriel01/SO-api#readme"
+}
