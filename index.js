@@ -6,17 +6,17 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false })
 // urlencodedParser -> for x-www-form-urlencoded
 
 app.post('/cp',urlencodedParser, (req,res) => {
-	const fisier1 = req.body.fisier1
-	const fisier2 = req.body.fisier2
+	const file1 = req.body.file1
+	const file2 = req.body.file2
 
-	if(fisier1 && fisier2) {
+	if(file1 && file2) {
 		try {
-			if(!fs.existsSync(fisier1) || !fs.existsSync(fisier2)){
+			if(!fs.existsSync(file1) || !fs.existsSync(file2)){
 				res.send(`One of the files doesn't exist`)
 			}
 			else {
-				fs.copyFile(fisier1, fisier2, ()=>{
-					console.log(`Successfully copied ${fisier1} to ${fisier2}`)
+				fs.copyFile(file1, file2, ()=>{
+					console.log(`Successfully copied ${file1} to ${file2}`)
 					res.send('OK')
 				})
 			}
