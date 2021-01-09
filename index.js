@@ -16,9 +16,16 @@ app.post('/cp',urlencodedParser, (req,res) => {
 			}
 			else {
 				fs.copyFile(file1, file2, (err)=>{
-					if(err) throw err
-					console.log(`Successfully copied ${file1} to ${file2}`)
-					res.send('OK')
+					if(err) {
+						res.send(err.code)
+					}
+
+					else {
+						console.log(`Successfully copied ${file1} to ${file2}`)
+						res.send('OK')
+					}
+					
+					
 				})
 			}
 			
@@ -44,14 +51,19 @@ app.post('/mv', urlencodedParser, (req,res) => {
 		}
 		else {
 			fs.rename(oldPath, newPath, (err) => {
-				if(err) throw err
-				if(!fs.existsSync(newPath)) {
-					res.send(`Couldn't move to new path`)
+				if(err){
+					res.send(err.code)
 				}
 				else {
-					console.log(`Successfully moved ${oldPath} to ${newPath}`)
-					res.send('OK')
+					if(!fs.existsSync(newPath)) {
+						res.send(`Couldn't move to new path`)
+					}
+					else {
+						console.log(`Successfully moved ${oldPath} to ${newPath}`)
+						res.send('OK')
+					}
 				}
+				
 				
 			})
 		}
@@ -68,8 +80,15 @@ app.post('/mkdir', urlencodedParser, (req, res) => {
 	const pathDir = req.body.pathDir
 	try {
 		fs.mkdir(pathDir, { recursive: true }, (err) => {
-  			if (err) throw err
-  			res.send('OK')
+  			if (err) {
+  				res.send(err.code)
+
+  			}
+  			else {
+  				console.log(`Successfully created directory ${pathDir}`)
+  				res.send('OK')
+  			}
+  			
 		});
 	}
 	catch(e) {
@@ -82,22 +101,16 @@ app.post('/rm', urlencodedParser, (req, res) => {
 	try {
 		fs.rm(pathRm, (err) => {
 			if (err) {
-
-				if(err.code === 'ERR_FS_EISDIR') {
-					res.send('Sent path is a directory')
-				}
-				else {
-					res.send('Something went wrong ...')
-				}
+				res.send(err.code)
 			}
 			else {
+				console.log(`Successfully removed file at ${pathRm}`)
 				res.send('OK')
 			}
 			
 		})
 	}
 	catch(e) {
-		console.log(e)
 		res.send('Something went wrong')
 	}
 })
