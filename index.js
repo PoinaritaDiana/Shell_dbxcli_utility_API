@@ -6,6 +6,7 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false })
 const formidable = require('formidable')
 // urlencodedParser -> for x-www-form-urlencoded
 
+
 app.post('/cp',urlencodedParser, (req,res) => {
 	const file1 = req.body.file1
 	const file2 = req.body.file2
@@ -145,6 +146,27 @@ app.post('/put', (req, res) => {
 
     })
 
+})
+
+app.get('/get',urlencodedParser,(req,res) => {
+	const path = req.body.path
+	var options = {
+    	root: './',
+    	dotfiles: 'deny',
+    	headers: {
+      		'x-timestamp': Date.now(),
+      		'x-sent': true
+    	}
+  	}
+
+  	res.sendFile(path, options, (err) => {
+    	if (err) {
+    		res.send(err.code)
+      		console.log(err)
+    	} else {
+      		console.log('Sent')
+    	}
+  	})
 })
 
 const PORT = process.env.PORT || 3000
