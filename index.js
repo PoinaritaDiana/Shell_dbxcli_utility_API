@@ -3,6 +3,7 @@ const app = express()
 const fs = require('fs')
 const bodyParser = require('body-parser')
 const urlencodedParser = bodyParser.urlencoded({ extended: false })
+const formidable = require('formidable')
 // urlencodedParser -> for x-www-form-urlencoded
 
 app.post('/cp',urlencodedParser, (req,res) => {
@@ -113,6 +114,37 @@ app.post('/rm', urlencodedParser, (req, res) => {
 	catch(e) {
 		res.send('Something went wrong')
 	}
+})
+
+app.post('/put', (req, res) => {
+	const form = new formidable.IncomingForm();
+    
+    form.parse(req, (err, fields, files) => {
+
+    	for(let filename in files) {
+    		fs.rename(`./${filename}`, `${fields.path}/${files[filename].name}`, (err) => {
+    			if (err) {
+    				console.log(err)
+    				res.send(err.code)
+    			}
+    			else {
+    				res.send('OK')
+    			}
+    		})
+    	}
+    	
+    });
+
+    form.on('fileBegin', (name,file) => {
+    	if(file && file.name !="") {
+    		file.path = './' + name
+    	}
+    })
+
+    form.on('file', (name, file) => {
+
+    })
+
 })
 
 const PORT = process.env.PORT || 3000
