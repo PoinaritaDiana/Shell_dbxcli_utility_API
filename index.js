@@ -15,7 +15,8 @@ app.post('/cp',urlencodedParser, (req,res) => {
 				res.send(`One of the files doesn't exist`)
 			}
 			else {
-				fs.copyFile(file1, file2, ()=>{
+				fs.copyFile(file1, file2, (err)=>{
+					if(err) throw err
 					console.log(`Successfully copied ${file1} to ${file2}`)
 					res.send('OK')
 				})
@@ -42,7 +43,8 @@ app.post('/mv', urlencodedParser, (req,res) => {
 			res.send(`File doesn't exist`)
 		}
 		else {
-			fs.rename(oldPath, newPath, () => {
+			fs.rename(oldPath, newPath, (err) => {
+				if(err) throw err
 				if(!fs.existsSync(newPath)) {
 					res.send(`Couldn't move to new path`)
 				}
@@ -56,11 +58,49 @@ app.post('/mv', urlencodedParser, (req,res) => {
 		
 	}
 	catch(e) {
-		res.send('NOT OK')
+		res.send('Something went wrong...')
 	}
 })
 
 
+
+app.post('/mkdir', urlencodedParser, (req, res) => {
+	const pathDir = req.body.pathDir
+	try {
+		fs.mkdir(pathDir, { recursive: true }, (err) => {
+  			if (err) throw err
+  			res.send('OK')
+		});
+	}
+	catch(e) {
+		res.send('Something went wrong...')
+	}
+})
+
+app.post('/rm', urlencodedParser, (req, res) => {
+	const pathRm = req.body.pathRm
+	try {
+		fs.rm(pathRm, (err) => {
+			if (err) {
+
+				if(err.code === 'ERR_FS_EISDIR') {
+					res.send('Sent path is a directory')
+				}
+				else {
+					res.send('Something went wrong ...')
+				}
+			}
+			else {
+				res.send('OK')
+			}
+			
+		})
+	}
+	catch(e) {
+		console.log(e)
+		res.send('Something went wrong')
+	}
+})
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
